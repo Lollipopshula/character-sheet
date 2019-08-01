@@ -1,0 +1,3 @@
+cd a*
+javac *
+pause
