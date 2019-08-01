@@ -1,3 +1,3 @@
 cd a*
-javac *
+javac *.java
 pause

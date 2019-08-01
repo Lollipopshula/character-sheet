@@ -3,51 +3,35 @@
 
 import java.awt.*;        // Using AWT container and component classes
 import java.awt.event.*;  // Using AWT event classes and listener interfaces
+import java.io.*;
+import java.util.*;
 
 // An AWT program inherits from the top-level container java.awt.Frame
 public class Main extends Frame implements ActionListener {
-   private Label lblCount;    // Declare a Label component
-   private TextField tfCount; // Declare a TextField component
-   private Button btnCount;   // Declare a Button component
-   private int count = 0;     // Counter's value
+   private StatsPanel statPanel;
+   private Button importStatsPanel;
+   private String[] stats;
+   private Scanner br;
 
    // Constructor to setup GUI components and event handlers
    public Main() {
-      setLayout(new FlowLayout());
-         // "super" Frame, which is a Container, sets its layout to FlowLayout to arrange
-         // the components from left-to-right, and flow to next row from top-to-bottom.
+      setLayout(new BorderLayout());
 
-      lblCount = new Label("Counter");  // construct the Label component
-      add(lblCount);                    // "super" Frame container adds Label component
+      statPanel = new StatsPanel();
 
-      tfCount = new TextField(count + "", 10); // construct the TextField component with initial text
-      tfCount.setEditable(false);       // set to read-only
-      add(tfCount);                     // "super" Frame container adds TextField component
+      add(statPanel, BorderLayout.WEST);
 
-      btnCount = new Button("Count");   // construct the Button component
-      add(btnCount);                    // "super" Frame container adds Button component
+      importStatsPanel = new Button("Import Stats");
+      add(importStatsPanel, BorderLayout.EAST);
+      importStatsPanel.addActionListener(this);
 
-      btnCount.addActionListener(this);
-         // "btnCount" is the source object that fires an ActionEvent when clicked.
-         // The source add "this" instance as an ActionEvent listener, which provides
-         //   an ActionEvent handler called actionPerformed().
-         // Clicking "btnCount" invokes actionPerformed().
+      setTitle("D&D 5e Character Sheet");  // "super" Frame sets its title
+      setSize(1000, 700);        // "super" Frame sets its initial window size
 
-      setTitle("AWT Counter");  // "super" Frame sets its title
-      setSize(250, 100);        // "super" Frame sets its initial window size
-
-      // For inspecting the Container/Components objects
-      // System.out.println(this);
-      // System.out.println(lblCount);
-      // System.out.println(tfCount);
-      // System.out.println(btnCount);
 
       setVisible(true);         // "super" Frame shows
 
-      // System.out.println(this);
-      // System.out.println(lblCount);
-      // System.out.println(tfCount);
-      // System.out.println(btnCount);
+
    }
 
    // The entry main() method
@@ -60,8 +44,21 @@ public class Main extends Frame implements ActionListener {
    // ActionEvent handler - Called back upon button-click.
    @Override
    public void actionPerformed(ActionEvent evt) {
-      ++count; // Increase the counter value
-      // Display the counter value on the TextField tfCount
-      tfCount.setText(count + ""); // Convert int to String
+     stats = new String[6];
+     try{
+      File file = new File("stats.txt");
+      Scanner br = new Scanner(new FileReader(file));
+      try{
+        for(int i = 0; i < 6; i++)
+          stats[i] = br.nextLine();
+      }
+      catch (Exception e){
+        System.out.println("IO error");
+      }
+     }
+     catch (Exception e){
+       System.out.println("file not found");
+     }
+     statPanel.updateMods(Integer.parseInt(stats[0]), Integer.parseInt(stats[1]), Integer.parseInt(stats[2]), Integer.parseInt(stats[3]), Integer.parseInt(stats[4]), Integer.parseInt(stats[5]));
    }
 }
